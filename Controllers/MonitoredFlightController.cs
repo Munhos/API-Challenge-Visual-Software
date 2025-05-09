@@ -22,37 +22,30 @@ namespace WebApplication1.Controllers
             _flightService = flightService;
         }
 
-        /// <summary>
-        /// Obtém todos os voos monitorados externos.
-        /// </summary>
-        /// <returns>Uma lista de voos monitorados.</returns>
-        /// <response code="200">Retorna a lista de voos monitorados.</response>
-        /// <response code="404">Não foram encontrados voos.</response>
         [HttpGet("getAllExternal")]
         [SwaggerOperation(Summary = "Obtém todos os voos monitorados externos")]
         [SwaggerResponse(200, "Lista de voos monitorados", typeof(List<MonitoredFlightsModel>))]
         [SwaggerResponse(404, "Nenhum voo encontrado")]
         public async Task<List<MonitoredFlightsModel>> ShowAllFlights()
         {
-            var flights = await _flightService.GetAllFlightsExternalApiData();
-
-            if (flights == null || !flights.Any())
+            try
             {
+                var flights = await _flightService.GetAllFlightsExternalApiData();
+
+                if (flights == null || !flights.Any())
+                {
+                    return new List<MonitoredFlightsModel>();
+                }
+
+                return flights.ToList();
+            }
+            catch
+            {
+                Response.StatusCode = 500;
                 return new List<MonitoredFlightsModel>();
             }
-
-            var response = flights.ToList();
-
-            return response;
         }
 
-        /// <summary>
-        /// Obtém um voo monitorado externo pelo ID.
-        /// </summary>
-        /// <param name="id">ID do voo</param>
-        /// <returns>Informações do voo monitorado.</returns>
-        /// <response code="200">Retorna o voo monitorado com sucesso.</response>
-        /// <response code="400">ID inválido.</response>
         [HttpGet("getOne/{id}")]
         [Authorize]
         [SwaggerOperation(Summary = "Obtém um voo monitorado pelo ID")]
@@ -60,36 +53,39 @@ namespace WebApplication1.Controllers
         [SwaggerResponse(400, "ID inválido")]
         public async Task<ActionResult> GetOneFlightsExternalApiData(int id)
         {
-            if (id == null)
+            try
             {
-                return BadRequest("ID cannot be null");
-            }
+                if (id == 0)
+                {
+                    return BadRequest("ID inválido");
+                }
 
-            var result = await _flightService.GetOneFlightsExternalApiData(id);
-            return Ok(result);
+                var result = await _flightService.GetOneFlightsExternalApiData(id);
+                return Ok(result);
+            }
+            catch
+            {
+                return StatusCode(500, "Erro ao buscar voo monitorado.");
+            }
         }
 
-        /// <summary>
-        /// Obtém todos os dados de voos internos monitorados.
-        /// </summary>
-        /// <returns>Uma lista de voos monitorados internos.</returns>
         [HttpGet("getAllinternal")]
         [Authorize]
         [SwaggerOperation(Summary = "Obtém todos os dados de voos internos monitorados")]
         [SwaggerResponse(200, "Lista de voos internos monitorados", typeof(IEnumerable<MonitoredFlightsModel>))]
         public async Task<ActionResult> GetAllFlightInternalData()
         {
-            var result = await _flightService.GetAllFlightInternalData();
-            return Ok(result);
+            try
+            {
+                var result = await _flightService.GetAllFlightInternalData();
+                return Ok(result);
+            }
+            catch
+            {
+                return StatusCode(500, "Erro ao buscar voos internos monitorados.");
+            }
         }
 
-        /// <summary>
-        /// Cria um novo voo monitorado interno.
-        /// </summary>
-        /// <param name="model">Dados do voo monitorado a ser criado</param>
-        /// <returns>Informações do voo monitorado criado.</returns>
-        /// <response code="201">Voo criado com sucesso.</response>
-        /// <response code="400">Dados inválidos.</response>
         [HttpPost("postInternal")]
         [Authorize]
         [SwaggerOperation(Summary = "Cria um novo voo monitorado interno")]
@@ -97,22 +93,22 @@ namespace WebApplication1.Controllers
         [SwaggerResponse(400, "Dados inválidos")]
         public async Task<ActionResult> CreateRegisterMonitoredFlyght([FromBody] FlyghtLinkedInUserModel model)
         {
-            if (model == null)
+            try
             {
-                return BadRequest("Model cannot be null");
-            }
+                if (model == null)
+                {
+                    return BadRequest("Model inválido");
+                }
 
-            var result = await _flightService.CreateRegisterMonitoredFlyght(model);
-            return Ok(result);
+                var result = await _flightService.CreateRegisterMonitoredFlyght(model);
+                return Ok(result);
+            }
+            catch
+            {
+                return StatusCode(500, "Erro ao criar voo monitorado.");
+            }
         }
 
-        /// <summary>
-        /// Deleta um voo monitorado interno pelo ID.
-        /// </summary>
-        /// <param name="id">ID do voo a ser deletado</param>
-        /// <returns>Status da operação.</returns>
-        /// <response code="200">Voo deletado com sucesso.</response>
-        /// <response code="400">ID inválido.</response>
         [HttpDelete("deleteInternal/{id}")]
         [Authorize]
         [SwaggerOperation(Summary = "Deleta um voo monitorado interno pelo ID")]
@@ -120,23 +116,22 @@ namespace WebApplication1.Controllers
         [SwaggerResponse(400, "ID inválido")]
         public async Task<ActionResult> DeleteRegisterLinkedInUserFlyghts(int id)
         {
-            if (id == 0)
+            try
             {
-                return BadRequest("Invalid Id");
-            }
+                if (id == 0)
+                {
+                    return BadRequest("Id inválido");
+                }
 
-            var result = await _flightService.DeleteRegisterLinkedInUserFlyghts(id);
-            return Ok(result);
+                var result = await _flightService.DeleteRegisterLinkedInUserFlyghts(id);
+                return Ok(result);
+            }
+            catch
+            {
+                return StatusCode(500, "Erro ao deletar voo monitorado.");
+            }
         }
 
-        /// <summary>
-        /// Atualiza um voo monitorado interno.
-        /// </summary>
-        /// <param name="model">Dados atualizados do voo monitorado</param>
-        /// <param name="id">ID do voo a ser atualizado</param>
-        /// <returns>Informações do voo atualizado.</returns>
-        /// <response code="200">Voo atualizado com sucesso.</response>
-        /// <response code="400">ID ou dados inválidos.</response>
         [HttpPatch("patchInternal/{id}")]
         [Authorize]
         [SwaggerOperation(Summary = "Atualiza um voo monitorado interno")]
@@ -144,18 +139,20 @@ namespace WebApplication1.Controllers
         [SwaggerResponse(400, "ID ou dados inválidos")]
         public async Task<ActionResult> PatchLinkedInUserFlyghts([FromBody] FlyghtLinkedInUserModel model, int id)
         {
-            if (model == null)
+            try
             {
-                return BadRequest("Invalid data");
-            }
+                if (model == null || id == 0)
+                {
+                    return BadRequest("Dados ou ID inválidos");
+                }
 
-            if (id == 0)
+                var result = await _flightService.PatchLinkedInUserFlyghts(model, id);
+                return Ok(result);
+            }
+            catch
             {
-                return BadRequest("Invalid Id");
+                return StatusCode(500, "Erro ao atualizar voo monitorado.");
             }
-
-            var result = await _flightService.PatchLinkedInUserFlyghts(model, id);
-            return Ok(result);
         }
     }
 }

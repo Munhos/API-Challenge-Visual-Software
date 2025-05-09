@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("API-Challenge-Visual-Software")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c9494ec72722bd968d78365208e3012b2ee51564")]
 [assembly: System.Reflection.AssemblyProductAttribute("API-Challenge-Visual-Software")]
 [assembly: System.Reflection.AssemblyTitleAttribute("API-Challenge-Visual-Software")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

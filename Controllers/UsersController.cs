@@ -20,27 +20,39 @@ namespace WebApplication1.Controllers
         [HttpPost("newUser")]
         public async Task<ActionResult> CreateNewUser([FromBody] UserModel user)
         {
-            if (user == null)
+            try
             {
-                return BadRequest("Invalid user");
+                if (user == null)
+                {
+                    return BadRequest("Usuário inválido");
+                }
+
+                var result = await _usersService.CreateNewUser(user);
+                return Ok(result);
             }
-
-            var result = await _usersService.CreateNewUser(user);
-
-            return Ok(result);
+            catch
+            {
+                return StatusCode(500, "Erro ao criar usuário.");
+            }
         }
 
         [HttpPost("login")]
         public async Task<ActionResult> LoginUser([FromBody] UserModel user)
         {
-            if (user == null)
+            try
             {
-                return BadRequest("Invalid user");
+                if (user == null)
+                {
+                    return BadRequest("Usuário inválido");
+                }
+
+                var result = await _usersService.LoginUser(user);
+                return Ok(result);
             }
-
-            var result = await _usersService.LoginUser(user);
-
-            return Ok(result);
+            catch
+            {
+                return StatusCode(500, "Erro ao realizar login.");
+            }
         }
     }
 }

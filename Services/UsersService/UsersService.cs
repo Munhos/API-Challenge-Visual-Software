@@ -11,18 +11,18 @@ namespace WebApplication1.Services.UsersService
     {
         private readonly AppDbContext _context;
         private readonly JwtService _jwtService;
+        private readonly PasswordHasher<UserModel> _hasher;
 
         public UsersService(AppDbContext context, JwtService jwtService)
         {
             _context = context;
             _jwtService = jwtService;
+            _hasher = new PasswordHasher<UserModel>();  
         }
-
-        private readonly PasswordHasher<string> _hasher = new PasswordHasher<string>();
 
         public string HashPassword(string plainPassword)
         {
-            return _hasher.HashPassword(null, plainPassword);
+            return _hasher.HashPassword(null, plainPassword);  
         }
 
         public bool VerifyPassword(string hashedPassword, string inputPassword)
@@ -38,7 +38,7 @@ namespace WebApplication1.Services.UsersService
 
             if (existingUserByEmail != null)
             {
-                return new BadRequestObjectResult("Email já está em uso.");
+                return new BadRequestObjectResult(new { message = "Email já está em uso." });
             }
 
             var existingUserByName = await _context.Users
@@ -46,7 +46,7 @@ namespace WebApplication1.Services.UsersService
 
             if (existingUserByName != null)
             {
-                return new BadRequestObjectResult("Nome já está em uso.");
+                return new BadRequestObjectResult(new { message = "Nome já está em uso." });
             }
 
             var newUser = new UserModel
@@ -69,18 +69,18 @@ namespace WebApplication1.Services.UsersService
 
             if (existingUser == null)
             {
-                return new BadRequestObjectResult("Usuário não encontrado.");
+                return new BadRequestObjectResult(new { message = "Usuário não encontrado." });
             }
 
             var passwordVerified = VerifyPassword(existingUser.Password, user.Password);
 
             if (!passwordVerified)
             {
-                return new BadRequestObjectResult("Senha inválida.");
+                return new BadRequestObjectResult(new { message = "Senha inválida." });
             }
 
             var token = _jwtService.GenerateToken(existingUser);
-            return new OkObjectResult(new { Token = token });
+            return new OkObjectResult(new { token });
         }
     }
 }

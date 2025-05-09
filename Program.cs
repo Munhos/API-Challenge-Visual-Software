@@ -12,7 +12,6 @@ using WebApplication1.Services.UsersService;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Configurações de serviço e outros middlewares
 builder.Services.AddHttpClient<FlightsService>();
 builder.Services.AddScoped<UsersService>();
 builder.Services.AddScoped<JwtService>();
@@ -76,11 +75,10 @@ builder.Services.AddEndpointsApiExplorer();
 
 var app = builder.Build();
 
-// Executa as migrações automaticamente
 using (var scope = app.Services.CreateScope())
 {
     var dbContext = scope.ServiceProvider.GetRequiredService<AppDbContext>();
-    dbContext.Database.Migrate();  // Atualiza o banco de dados
+    dbContext.Database.Migrate();  
 }
 
 if (app.Environment.IsDevelopment())

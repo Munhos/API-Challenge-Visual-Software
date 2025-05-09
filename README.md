@@ -17,7 +17,7 @@ Docker e Docker Compose
 Clone o repositório com o comando: 
 
 - git clone https://github.com/Munhos/API-Challenge-Visual-Software.git
-- cd Visual_Software_Challenge
+- cd API-Challenge-Visual-Software
 
 Se for executar diretamente pelo Visual Studio (sem Docker), troque db por localhost na DefaultConnection, ficando assim:
 - "DefaultConnection": "Host=localhost;Port=5432;Database=FlightsDb;Username=postgres;Password=postgres"

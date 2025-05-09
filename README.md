@@ -24,7 +24,7 @@ Se for executar diretamente pelo Visual Studio (sem Docker), troque db por local
 
 Para iniciar a aplicação via Docker Compose, execute:
 
-docker-compose up --build
+- docker-compose up --build
 
 A API estará disponível em: http://localhost:5000
 
